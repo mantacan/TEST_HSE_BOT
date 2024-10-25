@@ -8,6 +8,7 @@ class Search:
         self.api_key = api_key
         self.db_manager = db_manager
 
+    # TEST
     async def search(self, update: Update, context: CallbackContext) -> None:
         user = update.message.from_user if update.message else update.callback_query.from_user
         username = f"@{user.username}" if user.username else user.full_name
