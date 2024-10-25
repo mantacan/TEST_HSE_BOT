@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# formating
+black develop
+black tests
+
+# report
+
 coverage erase
 
 PYTHONPATH=$(pwd) coverage run --source=develop -m pytest tests/*.py
