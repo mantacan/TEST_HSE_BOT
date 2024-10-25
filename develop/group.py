@@ -1,6 +1,7 @@
 from telegram import Update
 from telegram.ext import CallbackContext
 
+
 class Group:
     def __init__(self, db_manager):
         self.db_manager = db_manager
@@ -23,10 +24,14 @@ class Group:
             await update.message.reply_text(response)
 
     async def add_to_group(self, update: Update, context: CallbackContext) -> None:
-        await update.message.reply_text("Все пользователи, зарегистрированные в боте, автоматически добавлены в группу.")
+        await update.message.reply_text(
+            "Все пользователи, зарегистрированные в боте, автоматически добавлены в группу."
+        )
 
     async def remove_from_group(self, update: Update, context: CallbackContext) -> None:
-        await update.message.reply_text("Пользователей нельзя удалять из группы, так как все зарегистрированные пользователи автоматически являются частью группы.")
+        await update.message.reply_text(
+            "Пользователей нельзя удалять из группы, так как все зарегистрированные пользователи автоматически являются частью группы."
+        )
 
     async def manage_group(self, update: Update, context: CallbackContext) -> None:
         group_management_text = (

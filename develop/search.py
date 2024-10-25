@@ -10,7 +10,11 @@ class Search:
 
     # TEST
     async def search(self, update: Update, context: CallbackContext) -> None:
-        user = update.message.from_user if update.message else update.callback_query.from_user
+        user = (
+            update.message.from_user
+            if update.message
+            else update.callback_query.from_user
+        )
         username = f"@{user.username}" if user.username else user.full_name
 
         location = self.db_manager.get_user_location(username)
@@ -22,7 +26,9 @@ class Search:
             else:
                 await update.callback_query.message.reply_text(results)
         else:
-            error_message = "Геолокация не установлена. Пожалуйста, обновите свою геолокацию."
+            error_message = (
+                "Геолокация не установлена. Пожалуйста, обновите свою геолокацию."
+            )
             if update.message:
                 await update.message.reply_text(error_message)
             else:
@@ -31,7 +37,9 @@ class Search:
     async def search_for_group(self, update: Update, context: CallbackContext) -> None:
         users = self.db_manager.get_all_users()
         if not users:
-            await update.message.reply_text("В группе нет пользователей с установленной геолокацией.")
+            await update.message.reply_text(
+                "В группе нет пользователей с установленной геолокацией."
+            )
             return
 
         latitudes = []
@@ -44,7 +52,9 @@ class Search:
                 longitudes.append(location[1])
 
         if not latitudes or not longitudes:
-            await update.message.reply_text("Нет доступных геолокаций участников группы.")
+            await update.message.reply_text(
+                "Нет доступных геолокаций участников группы."
+            )
             return
 
         central_latitude = sum(latitudes) / len(latitudes)
@@ -63,7 +73,7 @@ class Search:
             "point": f"{longitude},{latitude}",
             "radius": 5000,
             "key": self.api_key,
-            "page_size": 5
+            "page_size": 5,
         }
 
         try:
@@ -92,7 +102,9 @@ class Search:
                     place_lat, place_lon = "Не удалось определить", "координаты"
 
             if place_lat != "Не удалось определить" and place_lon != "координаты":
-                yandex_link = self._generate_yandex_maps_link_with_name(name, place_lat, place_lon)
+                yandex_link = self._generate_yandex_maps_link_with_name(
+                    name, place_lat, place_lon
+                )
             else:
                 yandex_link = "Ссылка не доступна"
 
@@ -106,18 +118,14 @@ class Search:
     def _get_coordinates_by_address(self, address):
         """Использует OpenStreetMap Nominatim для получения координат по адресу."""
         url = "https://nominatim.openstreetmap.org/search"
-        params = {
-            "q": address,
-            "format": "json",
-            "limit": 1
-        }
+        params = {"q": address, "format": "json", "limit": 1}
         try:
             response = requests.get(url, params=params)
             response.raise_for_status()
             geo_data = response.json()
 
             if geo_data:
-                return float(geo_data[0]['lat']), float(geo_data[0]['lon'])
+                return float(geo_data[0]["lat"]), float(geo_data[0]["lon"])
             else:
                 return None
         except requests.RequestException as e:

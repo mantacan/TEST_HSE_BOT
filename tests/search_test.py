@@ -9,10 +9,12 @@ from telegram.ext import CallbackContext
 async def test_search_success():
     user = User(id=1, username="testuser", first_name="Test", is_bot=False)
 
-    chat = Chat(id=12345, type='private')
+    chat = Chat(id=12345, type="private")
     bot = Mock(spec=Bot)
 
-    message = Message(message_id=1, from_user=user, chat=chat, date=None, text="/search")
+    message = Message(
+        message_id=1, from_user=user, chat=chat, date=None, text="/search"
+    )
     message._bot = bot
 
     update = Update(update_id=1, message=message)
@@ -23,7 +25,9 @@ async def test_search_success():
     db_manager.get_user_location.return_value = (55.7558, 37.6173)
 
     search = Search(api_key="testkey", db_manager=db_manager)
-    search.find_nearest_bars_and_clubs = Mock(return_value="Ближайшие бары и клубы найдены")
+    search.find_nearest_bars_and_clubs = Mock(
+        return_value="Ближайшие бары и клубы найдены"
+    )
 
     await search.search(update, context)
 
@@ -35,10 +39,12 @@ async def test_search_success():
 async def test_search_no_location():
     user = User(id=1, username="testuser", first_name="Test", is_bot=False)
 
-    chat = Chat(id=12345, type='private')
+    chat = Chat(id=12345, type="private")
     bot = Mock(spec=Bot)
 
-    message = Message(message_id=1, from_user=user, chat=chat, date=None, text="/search")
+    message = Message(
+        message_id=1, from_user=user, chat=chat, date=None, text="/search"
+    )
     message._bot = bot
 
     update = Update(update_id=1, message=message)
@@ -66,7 +72,9 @@ async def test_search_for_group_success():
     db_manager.get_user_location.side_effect = [(55.7558, 37.6173), (55.75, 37.62)]
 
     search = Search(api_key="testkey", db_manager=db_manager)
-    search.find_nearest_bars_and_clubs = Mock(return_value="Групповой поиск выполнен успешно")
+    search.find_nearest_bars_and_clubs = Mock(
+        return_value="Групповой поиск выполнен успешно"
+    )
 
     await search.search_for_group(update, context)
 
@@ -99,9 +107,7 @@ def test_find_nearest_bars_and_clubs_success():
                     {
                         "name": "Бар",
                         "address_name": "Улица",
-                        "geometry": {
-                            "location": {"lat": 55.7558, "lon": 37.6173}
-                        }
+                        "geometry": {"location": {"lat": 55.7558, "lon": 37.6173}},
                     }
                 ]
             }
@@ -140,6 +146,7 @@ def test_get_coordinates_by_address_error():
         with pytest.raises(Exception) as excinfo:
             search._get_coordinates_by_address("Неизвестный адрес")
         assert "Ошибка сети" in str(excinfo.value)
+
 
 def test_generate_yandex_maps_link_with_name_success():
     search = Search(api_key="testkey", db_manager=None)

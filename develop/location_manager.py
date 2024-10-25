@@ -2,14 +2,18 @@ from telegram import Update
 from telegram.ext import CallbackContext
 from database_manager import DatabaseManager
 
+
 class LocationManager:
     def __init__(self, db_manager):
         self.current_location = None
         self.db_manager = db_manager
 
-    async def update_location_command(self, update: Update, context: CallbackContext) -> None:
+    async def update_location_command(
+        self, update: Update, context: CallbackContext
+    ) -> None:
         await update.message.reply_text(
-            "Пожалуйста, отправьте свою геолокацию для обновления. Нажмите на иконку скрепки и выберите 'Геолокация'.")
+            "Пожалуйста, отправьте свою геолокацию для обновления. Нажмите на иконку скрепки и выберите 'Геолокация'."
+        )
 
     async def update_location(self, update: Update, context: CallbackContext) -> None:
         if update.message.location:
@@ -28,8 +32,14 @@ class LocationManager:
                 "Не удалось получить геолокацию. Убедитесь, что вы разрешили доступ к геолокации и попробуйте снова."
             )
 
-    async def show_current_location(self, update: Update, context: CallbackContext) -> None:
-        user = update.message.from_user if update.message else update.callback_query.from_user
+    async def show_current_location(
+        self, update: Update, context: CallbackContext
+    ) -> None:
+        user = (
+            update.message.from_user
+            if update.message
+            else update.callback_query.from_user
+        )
         username = f"@{user.username}" if user.username else user.full_name
 
         location = self.db_manager.get_user_location(username)
